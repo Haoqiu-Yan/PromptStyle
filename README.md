@@ -1,5 +1,5 @@
 # ControlSpeech: Towards Simultaneous Zero-shot Speaker Cloning and Zero-shot Language Style Control With Decoupled Codec
-
+# PromptStyle
 
 [![arXiv](https://img.shields.io/badge/arXiv-Paper-<COLOR>.svg)](https://arxiv.org/abs/2406.01205)
 [![demo](https://img.shields.io/badge/ControlSpeech-Demo-red)](https://controlspeech.github.io)
