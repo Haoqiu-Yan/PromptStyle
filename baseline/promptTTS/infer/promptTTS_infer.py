@@ -35,7 +35,7 @@ class TCTTSInfer(BaseTTSInfer):
 
     def build_adapter(self):
         adapter_net = Bert_Style_Finetune()
-        load_ckpt(adapter_net, 'checkpoints/finetune_bert_style', 'model')
+        load_ckpt(adapter_net, '/data1/haoqiuyan/models/promptspeech/finetune_bert_style/model_ckpt_steps_100000.ckpt', 'model')
         adapter_net.to(self.device)
         adapter_net.eval()
         return adapter_net
@@ -120,17 +120,19 @@ class TCTTSInfer(BaseTTSInfer):
         dict = set_hparams()
         infer_ins = cls(hp,'cuda')
         exp_name = dict['exp_name']
-        base_dir = f'infer/promptts_baseline_output'
+        # base_dir = f'infer/promptts_baseline_output'
+        base_dir = f'infer/promptts1_spontaneous6'
         os.makedirs(base_dir, exist_ok=True)
 
-        with open('infer/libri_test.csv','r') as fp:
+        # with open('infer/libri_test_part.csv','r') as fp:
+        with open('infer/spontaneous_verify_expresso.csv','r') as fp:
             lines = fp.readlines()[1:]
             for l in tqdm(lines):
                 splits = l.strip().split(',')
                 item_name = splits[0]
                 text = splits[7]
                 style_prompt = splits[8]
-                os.makedirs(f'{base_dir}/{item_name}', exist_ok=True)
+                os.makedirs(f'{base_dir}', exist_ok=True)
                 style_embed = get_style_embed(style_prompt)
                 style_embed = infer_ins.get_fintune_bert_embed(style_embed.unsqueeze(dim=0))
                 inp = {
@@ -142,11 +144,12 @@ class TCTTSInfer(BaseTTSInfer):
                     'text': text
                 }
                 gen_wav = infer_ins.infer_once(inp)
-                save_wav(gen_wav, f'{base_dir}/{item_name}/gen.wav', hp['audio_sample_rate'])
+                # save_wav(gen_wav, f'{base_dir}/{item_name}/gen.wav', hp['audio_sample_rate'])
+                save_wav(gen_wav, f'{base_dir}/{item_name}_gen.wav', hp['audio_sample_rate'])
                 # shutil.copy(wav_fp,f'{base_dir}/{item_name}')
 
-tokenizer = AutoTokenizer.from_pretrained("../ckpt/bert-base-uncased")
-model = AutoModel.from_pretrained("../ckpt/bert-base-uncased")      
+tokenizer = AutoTokenizer.from_pretrained("/data1/haoqiuyan/models/promptspeech/bert-base-uncased")
+model = AutoModel.from_pretrained("/data1/haoqiuyan/models/promptspeech/bert-base-uncased")        
 def get_style_embed(style_prompt):
     inputs = tokenizer(style_prompt, return_tensors="pt")
     outputs = model(**inputs)

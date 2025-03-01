@@ -35,7 +35,7 @@ class TCTTSInfer(BaseTTSInfer):
 
     def build_adapter(self):
         adapter_net = Bert_Style_Finetune()
-        load_ckpt(adapter_net, 'checkpoints/finetune_bert_style', 'model')
+        load_ckpt(adapter_net, '/data1/haoqiuyan/models/promptspeech/finetune_bert_style/model_ckpt_steps_100000.ckpt', 'model')
         adapter_net.to(self.device)
         adapter_net.eval()
         return adapter_net
@@ -135,10 +135,10 @@ class TCTTSInfer(BaseTTSInfer):
             'text': raw_text
         }
         gen_wav = infer_ins.infer_once(inp)
-        save_wav(gen_wav, f'{base_dir}/gen.wav', hp['audio_sample_rate'])
+        save_wav(gen_wav, f'{base_dir}/gen1.wav', hp['audio_sample_rate'])
 
-tokenizer = AutoTokenizer.from_pretrained("../ckpt/bert-base-uncased")
-model = AutoModel.from_pretrained("../ckpt/bert-base-uncased")      
+tokenizer = AutoTokenizer.from_pretrained("/data1/haoqiuyan/models/promptspeech/bert-base-uncased")
+model = AutoModel.from_pretrained("/data1/haoqiuyan/models/promptspeech/bert-base-uncased")      
 def get_style_embed(style_prompt):
     inputs = tokenizer(style_prompt, return_tensors="pt")
     outputs = model(**inputs)
