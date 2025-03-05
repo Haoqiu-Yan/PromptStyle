@@ -18,8 +18,8 @@ from scipy.io.wavfile import write
 import scipy.io.wavfile as wavfile
 from transformers import AutoTokenizer, AutoModel
 
-tokenizer = AutoTokenizer.from_pretrained("../ckpt/bert-base-uncased")
-model = AutoModel.from_pretrained("../ckpt/bert-base-uncased")      
+tokenizer = AutoTokenizer.from_pretrained("/data1/haoqiuyan/models/promptspeech/bert-base-uncased")
+model = AutoModel.from_pretrained("/data1/haoqiuyan/models/promptspeech/bert-base-uncased")      
 def get_style_embed(style_prompt):
     inputs = tokenizer(style_prompt, return_tensors="pt")
     outputs = model(**inputs)
@@ -71,7 +71,7 @@ def load_checkpoint(checkpoint_path, model, optimizer=None):
   return model, optimizer, learning_rate, iteration
 
 
-device = 'cuda:0'
+device = 'cuda'
 hps = utils.get_hparams_from_file("./configs/prompt.json")
 net_g = SynthesizerTrn(
     len(symbols),
@@ -80,7 +80,7 @@ net_g = SynthesizerTrn(
     n_speakers=hps.data.n_speakers,
     **hps.model).cuda(device=device)
 _ = net_g.eval()
-_ = utils.load_checkpoint("./logs/prompt_style_baseline/G_1365000.pth", net_g, None)
+_ = utils.load_checkpoint("/data1/haoqiuyan/models/promptspeech/prompt_style/G_1365000.pth", net_g, None)
 
 ### synthesis
 stn_tst = get_text("But it is not with a view to distinction that you should cultivate this talent, if you consult your own happiness.", hps)
@@ -92,8 +92,8 @@ with torch.no_grad():
     sid = torch.LongTensor([7]).cuda(device=device)
     style_embed = style_embed.cuda(0)
     audio = net_g.infer(x_tst, x_tst_lengths, sid=sid,mel=None,style_embed=style_embed, noise_scale=.667, noise_scale_w=0.8, length_scale=1)[0][0,0].data.cpu().float().numpy()
-    print(audio.shape)
+    # print(audio.shape)
 
 # 保存为.wav文件
-output_wav_file = "./output_audio.wav"
+output_wav_file = "./outputs/gen1.wav"
 wavfile.write(output_wav_file, hps.data.sampling_rate, audio)

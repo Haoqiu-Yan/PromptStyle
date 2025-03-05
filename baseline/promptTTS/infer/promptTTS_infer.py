@@ -132,7 +132,7 @@ class TCTTSInfer(BaseTTSInfer):
                 item_name = splits[0]
                 text = splits[7]
                 style_prompt = splits[8]
-                os.makedirs(f'{base_dir}', exist_ok=True)
+                # os.makedirs(f'{base_dir}', exist_ok=True)
                 style_embed = get_style_embed(style_prompt)
                 style_embed = infer_ins.get_fintune_bert_embed(style_embed.unsqueeze(dim=0))
                 inp = {

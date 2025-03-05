@@ -12,6 +12,14 @@ hyperparameter. Some cleaners are English-specific. You'll typically want to use
      the symbols in symbols.py to match your data).
 '''
 
+# # loads the espeak-ng shared library, which is required by phonemizer
+# # ref: https://github.com/thewh1teagle/espeakng-loader?tab=readme-ov-file#usage-with-phonemizer
+# from phonemizer.backend.espeak.wrapper import EspeakWrapper
+# import espeakng_loader
+
+# EspeakWrapper.set_library(espeakng_loader.get_library_path())
+# EspeakWrapper.set_data_path(espeakng_loader.get_data_path())
+
 import re
 from unidecode import unidecode
 from phonemizer import phonemize
